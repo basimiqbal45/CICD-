@@ -18,17 +18,18 @@ node {
         echo 'Deploying to EC2'
         sh """
             sudo mkdir -p ${appDir}
-            sudo chown -R jenkins:jenkins ${appDir}
+            sudo chown -R \$(whoami):\$(whoami) ${appDir}
 
-            rsync -av --delete --exclude='.git' --exclude='node_modules' ./ ${appDir}
+            rsync -av --delete --exclude='.git' --exclude='node_modules' ./ ${appDir}/
 
             cd ${appDir}
-            sudo npm install
-            sudo npm run build
+            npm install
+            npm run build
             sudo fuser -k 3000/tcp || true
             nohup npm run start > /tmp/nextjs-app.log 2>&1 &
             sleep 5
-            echo 'App started on port 3000'
+            curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 || echo 'App may still be starting...'
+            echo 'Deployment complete - App running on port 3000'
         """
     }
 }
