@@ -10,7 +10,7 @@ node {
         echo 'Cloning the repo'
         git(
             branch: 'main',
-            url: 'https://github.com/farzeen-ali/CICD-Jenkins-AWS'
+            url: 'https://github.com/basimiqbal45/CICD-Jenkins-AWS'
         )
     }
 
@@ -26,7 +26,9 @@ node {
             sudo npm install
             sudo npm run build
             sudo fuser -k 3000/tcp || true
-            npm run start
+            nohup npm run start > /tmp/nextjs-app.log 2>&1 &
+            sleep 5
+            echo 'App started on port 3000'
         """
     }
 }
